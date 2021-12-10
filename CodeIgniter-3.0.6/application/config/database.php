@@ -94,3 +94,25 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$db['myboard'] = array(  // 이 파일에서 중복된 이름이 존재한다면 에러가 발생됩니다.
+    'dsn'	=> '',
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => 'autoset',                 // 테스트 서버라 비밀번호가 설정 안 되어있어 비워뒀습니다.
+    'database' => 'myboard',
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);

@@ -59,7 +59,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 $autoload['libraries'] = array();
-
+//$autoload['libraries'] = array('myboard', 'ci_sessions'); //database 와 session 라이브러리를 자동으로 로드
 /*
 | -------------------------------------------------------------------
 |  Auto-load Drivers
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array();
+$autoload['helper'] = array('date');
 
 /*
 | -------------------------------------------------------------------
