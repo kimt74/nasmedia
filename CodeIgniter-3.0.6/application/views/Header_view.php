@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>CodeIgniter</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <link type="text/css" rel='stylesheet' href="/todo/include/css/bootstrap.css" />
+<!--    <link type="text/css" rel='stylesheet' href="/todo/include/css/bootstrap.css" />-->
 </head>
 <body>
 <div id="main">
@@ -21,7 +21,7 @@
     <nav id="gnb">
         <ul>
             <li>
-                <a rel="external" href="/bbs/<?php echo $this -> uri -> segment(1); ?>/lists/<?php echo $this -> uri -> segment(3); ?>"> 게시판 프로젝트 </a>
+                <a rel="external" href="/<?php echo $this -> uri -> segment(1); ?>/lists/<?php echo $this -> uri -> segment(3); ?>"> 게시판 프로젝트 </a>
             </li>
         </ul>
     </nav>
