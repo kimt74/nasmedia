@@ -21,7 +21,7 @@
     <nav id="gnb">
         <ul>
             <li>
-                <a rel="external" href="/<?php echo $this -> uri -> segment(1); ?>/lists/<?php echo $this -> uri -> segment(3); ?>"> 게시판 프로젝트 </a>
+                <a rel="external" href="/board"> 게시판 프로젝트 </a>
             </li>
         </ul>
     </nav>
