@@ -46,6 +46,7 @@ class Board extends CI_Controller
         // 게시판 이름과 게시물 번호에 해당하는 게시물 가져오기
 //       echo $this -> uri -> segment(3), $this -> uri -> segment(4);
 
+
         $nBoardId =  $this->input->post_get('id');
         echo $nBoardId;
         $data['views'] = $this -> Board_model -> get_view($nBoardId);
