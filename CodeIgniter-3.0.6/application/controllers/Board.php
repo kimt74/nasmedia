@@ -45,7 +45,7 @@ class Board extends CI_Controller
     function view() {
         // 게시판 이름과 게시물 번호에 해당하는 게시물 가져오기
 //       echo $this -> uri -> segment(3), $this -> uri -> segment(4);
-
+        $this -> output -> enable_profiler(TRUE);
 
         $nBoardId =  $this->input->post_get('id');
         echo $nBoardId;
@@ -92,10 +92,13 @@ class Board extends CI_Controller
 
 
         // 페이지 네이션 설정
+//        $config['base_url'] = '/board/lists/board/' . $page_url . '/page';
         $config['base_url'] = '/board/lists/board/' . $page_url . '/page';
-        // 페이징 주소
 
-        $config['total_rows'] = $this -> Board_model -> get_list($this -> uri -> segment(1), 'count',
+        // 페이징 주소
+echo $this -> uri -> segment(1);
+
+        $config['total_rows'] = $this -> Board_model -> get_list('board', 'count',                     //$this -> uri -> segment(1);
             '', '', $search_word);  // segment: 1
         // 게시물 전체 개수
         $config['per_page'] = 5;

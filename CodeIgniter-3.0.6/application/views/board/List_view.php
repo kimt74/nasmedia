@@ -60,8 +60,9 @@
                         </a>
                         -->
                         <a rel="external"
-                           href="board/view/?id=<?php echo $lt->board_id; ?>"> <?php echo $lt->title; ?>
+                           href="/board/view/?id=<?php echo $lt->board_id; ?>"> <?php echo $lt->title; ?>
                         </a>
+
                     </td>
                     <td><?php echo $lt->user_id; ?></td>
                     <td><?php echo $lt -> hits;?></td>

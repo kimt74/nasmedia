@@ -61,7 +61,7 @@ class Board_model extends CI_Model
     /**
      * 게시물 상세보기 가져오기
      *
-     * @param string $table 게시판 테이블
+     *
      * @param string $id 게시물 번호
      * @return array
      */
