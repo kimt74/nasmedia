@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
     <title>CodeIgniter</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<!--        <link type="text/css" rel="stylesheet" href="/bbs/include/css/bootstrap.css" />-->
+    <!--        <link type="text/css" rel="stylesheet" href="/bbs/include/css/bootstrap.css" />-->
     <script>
         $(document).ready(function () {
             $("#search_btn").click(function () {
@@ -46,29 +46,27 @@
         </thead>
         <tbody>
         <?php
-
         if (isset($list)) {
             foreach ($list as $lt) {
 //                var_dump($this -> uri -> segment(1));
                 ?>
                 <tr>
-                    <th scope="row"><?php echo $lt->board_id; ?></th>
+                    <th scope="row"><?= $lt->board_id; ?></th>
                     <td>
                         <!--
                         <a rel="external"
-                           href="ci/?<?php echo $this->uri->segment(1); ?>/view/<?php echo $lt->board_id; ?>"> <?php echo $lt->title; ?>
+                           href="ci/?<?= $this->uri->segment(1); ?>/view/<?= $lt->board_id; ?>"> <?= $lt->title; ?>
                         </a>
                         -->
-                        <a rel="external"
-                           href="/board/view/?id=<?php echo $lt->board_id; ?>"> <?php echo $lt->title; ?>
+                        <a rel="external" href="/board/view?id=<?= $lt->board_id; ?>"> <?= $lt->title; ?>
                         </a>
 
                     </td>
-                    <td><?php echo $lt->user_id; ?></td>
-                    <td><?php echo $lt -> hits;?></td>
+                    <td><?= $lt->login_id; ?></td>
+                    <td><?= $lt->hits; ?></td>
                     <td>
-                        <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>">
-                            <?php echo mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>
+                        <time datetime="<?= mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>">
+                            <?= mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>
                         </time>
                     </td>
                 </tr>

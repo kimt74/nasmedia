@@ -40,6 +40,56 @@ class Board extends CI_Controller
     }
 
     /**
+     * 게시물 쓰기
+     */
+    function write() {
+        echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+
+        if ($_POST) {
+            // 글쓰기 POST 전송 시
+            $this -> load -> helper('alert');
+
+            // 주소 중에서 page 세그먼트가 있는지 검사하기 위해 주소를 배열로 반환
+            $uri_array = $this -> segment_explode($this -> uri -> uri_string());
+
+            if (in_array('page', $uri_array)) {
+                $pages = urldecode($this -> url_explode($uri_array, 'page'));
+            } else {
+                $pages = 1;
+            }
+
+            if (!$this -> input -> post('subject', TRUE) AND !$this -> input -> post('contents', TRUE)) {
+                // 글 내용이 없을 경우, 프로그램 단에서 한 번 더 체크
+                alert('비정상적인 접근입니다.', '/bbs/board/lists/' . $this -> uri -> segment(3) . '/page/' . $pages);
+                exit ;
+            }
+
+            // var_dump($_POST);
+            $write_data = array(
+                'subject' => $this -> input -> post('subject', TRUE),
+                'contents' => $this -> input -> post('contents', TRUE),
+                'table' => $this -> uri -> segment(3)
+            );
+
+            $result = $this -> Board_model -> insert_board($write_data);
+
+            if ($result) {
+                alert("입력되었습니다.",'/bbs/board/lists/'.$this->uri->segment(3).'/page/'.$pages);
+                exit;
+            } else {
+                alert("다시 입력해주세요.",'/bbs/board/lists/'.$this->uri->segment(3).'/page/'.$pages);
+                exit;
+            }
+        } else {
+            // 쓰기 폼 view 호출
+            $this->load->view('board/Write_view');
+        }
+    }
+
+
+
+
+    /**
      * 게시물 보기
      */
     function view() {

@@ -55,7 +55,7 @@
                 <th scope="col">제목: <?php if (isset($views)) {
                         echo $views -> title;
                     } ?></th>
-                <th scope="col">이름: <?php echo $views -> user_id;?></th>
+                <th scope="col">이름: <?php echo $views -> login_id;?></th>
                 <th scope="col">조회수: <?php echo $views -> hits;?></th>
                 <th scope="col">등록일: <?php echo $views -> created;?></th>
             </tr>
@@ -70,8 +70,9 @@
             <tfoot>
             <tr>
                 <th colspan="4">
-                    <a href="/board/lists/<?php echo $this -> uri -> segment(3); ?>/
-                                    page/<?php echo $this -> uri -> segment(7); ?>" class="btn btn-primary">목록 </a>
+<!--                    <a href="/board/lists/--><?php //echo $this -> uri -> segment(3); ?><!--/-->
+<!--                                    page/--><?php //echo $this -> uri -> segment(7); ?><!--" class="btn btn-primary">목록 </a>-->
+                    <a href="javascript:history.back();" class="btn btn-primary">목록</a>
                     <a href="/board/modify/<?php echo $this -> uri -> segment(3); ?>/board_id/
                                     <?php echo $this -> uri -> segment(4); ?>/page/<?php echo $this -> uri -> segment(7); ?>"
                        class="btn btn-warning"> 수정 </a>
