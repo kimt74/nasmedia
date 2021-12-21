@@ -87,8 +87,6 @@ echo $this->session->userdata('login_id');
     }
 
     function register(){
-        //$this->_head();
-        $this -> load -> view('Header_view');
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('email', '이메일 주소', 'required|valid_email|is_unique[user.email]');
@@ -97,18 +95,18 @@ echo $this->session->userdata('login_id');
         $this->form_validation->set_rules('re_pw', '비밀번호 확인', 'required');
 
         if($this->form_validation->run() === false){
-            $this->load->view('register');
+            $this->load->view('auth/Register_view');
         } else {
             if(!function_exists('password_hash')){
-                $this->load->helper('password');
+                $this->load->helper('pw');
             }
-            $hash = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
+            $hash = password_hash($this->input->post('pw'), PASSWORD_BCRYPT);
 
-            $this->load->model('user_model');
+            $this->load->model('User_model');
             $this->user_model->add(array(
                 'email'=>$this->input->post('email'),
-                'password'=>$hash,
-                'nickname'=>$this->input->post('nickname')
+                'pw'=>$hash,
+                'login_id'=>$this->input->post('login_id')
             ));
 
             $this->session->set_flashdata('message', '회원가입에 성공했습니다.');
@@ -117,7 +115,6 @@ echo $this->session->userdata('login_id');
         }
 
 
-        $this->_footer();
     }
 
 
