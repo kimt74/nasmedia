@@ -5,7 +5,7 @@
         'class' => 'form-horizontal',
         'id' => 'auth_login'
     );
-    echo form_open('/auth/Login_view', $attributes);
+    echo form_open('/Auth/login', $attributes);
     ?>
     <fieldset>
         <legend>로그인</legend>

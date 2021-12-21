@@ -18,13 +18,14 @@
             <small></small>
             <p>
                 <?php
-                if ( @$this -> session -> userdata('logged_in') == TRUE) {
-                    ?>
+                if ( !empty($this -> session -> userdata('login_id')) ) {
+                    ;?>
                     <?php echo $this -> session -> userdata('login_id');?> 님 환영합니다. <a href="/auth/logout" class="btn">로그아웃</a>
                     <?php
                 } else {
                     ?>
-                    <a href="/auth/login" class="btn btn-primary"> 로그인 </a>
+                    <a href="/auth/login" class="btn btn-primary"> [로그인] </a>
+                    <a href="/auth/register">[회원가입]</a>
                     <?php
                 }
                 ?>

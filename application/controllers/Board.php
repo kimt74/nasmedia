@@ -10,9 +10,16 @@ class Board extends CI_Controller
     function __construct()
     {
         parent::__construct();
+
         $this->load->database();
         $this->load->model('Board_model');
         $this->load->helper(array('url', 'date'));
+
+
+   //     $this -> session -> set_userdata("login_id","advisor1");
+//echo $this->session->userdata('login_id');)
+//        echo $this->session->userdata('login_id');
+//        exit;
 //        $this -> load -> helper('form');
     }
 
