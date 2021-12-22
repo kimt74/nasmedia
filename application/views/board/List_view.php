@@ -1,12 +1,4 @@
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--    <meta charset="UTF-8"/>-->
-<!--    <meta name="apple-mobile-web-app-capable" content="yes"/>-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>-->
-<!--    <title>CodeIgniter</title>-->
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-<!--            <link type="text/css" rel="stylesheet" href="/bbs/include/css/bootstrap.css" />-->
+
     <script>
         $(document).ready(function () {
             $("#search_btn").click(function () {
@@ -35,7 +27,7 @@
         <h1></h1>
     </header>
     <h1></h1>
-    <table cellpadding="0" cellspacing="0">
+    <table cellpadding="0" cellspacing="0" border="1" width="0">
         <thead>
         <tr>
             <th scope="col">번호</th>
@@ -91,6 +83,9 @@
             <input type="text" name="search_word" id="q" onkeypress="board_search_enter(document.q);"/>
             <input type="button" value="검색" id="search_btn"/>
         </form>
+    </div>
+    <div>
+            <a href="/board/write" class="btn btn-primary">[게시물등록]</a>
     </div>
 </article>
 

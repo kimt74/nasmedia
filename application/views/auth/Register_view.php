@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="login_id">닉네임</label>
+                <label class="control-label" for="login_id">로그인 ID</label>
                 <div class="controls">
                     <input type="text" id="login_id" name="login_id" value="<?php echo set_value('login_id'); ?>"  placeholder="닉네임">
                 </div>

@@ -14,7 +14,7 @@ Class Auth_model extends CI_Model {
      * @return array
      */
     function login($auth) {
-        $sql = "SELECT login_id, email FROM user WHERE login_id = '" . $auth['login_id'] . "' AND pw = '" . $auth['pw'] . "' ";
+        $sql = "SELECT * FROM user WHERE login_id = '" . $auth['login_id'] . "' AND pw = password('" . $auth['pw'] . "') ";
 
         $query = $this -> db -> query($sql);
 

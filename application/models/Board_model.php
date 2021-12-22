@@ -120,7 +120,7 @@ class Board_model extends CI_Model
     function insert_board($arrays) {
 
         $insert_array = array(
-            'user_id' => 'advisor',
+            'user_id' => $this->db->escape_str($arrays['user_id']),
             'title' => $this->db->escape_str($arrays['title']),
             'content' => $this->db->escape_str($arrays['content']),
             'created' => date("Y-m-d H:i:s")

@@ -47,6 +47,7 @@ class Auth extends CI_Controller {
             $auth_data = array(
                 'login_id' => $this -> input -> post('login_id', TRUE),
                 'pw' => $this -> input -> post('pw', TRUE)
+//                'pw' => password_verify($this -> input -> post('pw', TRUE), $this ->form_validation->pw)
             );
 
             $result = $this -> Auth_model -> login($auth_data);
@@ -56,15 +57,17 @@ class Auth extends CI_Controller {
                 $newdata = array(
                     'login_id' => $result -> login_id,
                     'email' => $result -> email,
-                    'logged_in' => TRUE
+                    'logged_in' => TRUE,
+                    'user_id' => $result -> user_id
                 );
+                $this -> session -> set_userdata($newdata);
 
-                $this -> session -> set_userdata('login_id',$result -> login_id );
-print_r($this -> session);
-echo $this->session->userdata('login_id');
-                echo $this->session->userdata('login_id');
+//                $this -> session -> set_userdata('login_id',$result -> login_id );
+////print_r($this -> session);
+//echo $this->session->userdata('login_id');
+//                echo $this->session->userdata('login_id');
                echo "<script>document.location.href='/board';</script>";
-             //        alert('로그인 되었습니다.', '/board/?per_page=1');
+                     alert('로그인 되었습니다.', '/board/?per_page=1');
                 exit;
             } else {
                 alert('아이디나 비밀번호를 확인해 주세요.', '/board/?per_page=1');
@@ -91,27 +94,25 @@ echo $this->session->userdata('login_id');
 
         $this->form_validation->set_rules('email', '이메일 주소', 'required|valid_email|is_unique[user.email]');
         $this->form_validation->set_rules('login_id', '로그인아이디', 'required|min_length[5]|max_length[20]');
-        $this->form_validation->set_rules('pw', '비밀번호', 'required|min_length[6]|max_length[30]|matches[re_password]');
+        $this->form_validation->set_rules('pw', '비밀번호', 'required|min_length[6]|max_length[30]|matches[re_pw]');
         $this->form_validation->set_rules('re_pw', '비밀번호 확인', 'required');
 
         if($this->form_validation->run() === false){
             $this->load->view('auth/Register_view');
         } else {
-            if(!function_exists('password_hash')){
-                $this->load->helper('pw');
-            }
-            $hash = password_hash($this->input->post('pw'), PASSWORD_BCRYPT);
 
             $this->load->model('User_model');
-            $this->user_model->add(array(
-                'email'=>$this->input->post('email'),
-                'pw'=>$hash,
-                'login_id'=>$this->input->post('login_id')
+            $this->User_model->add(array(
+                'email'=>$this->input->post('email', TRUE),
+                'pw'=>$this->input->post('pw', TRUE),
+                'login_id'=>$this->input->post('login_id', TRUE)
             ));
+
 
             $this->session->set_flashdata('message', '회원가입에 성공했습니다.');
             $this->load->helper('url');
-            redirect('/');
+            redirect('/auth/login');
+
         }
 
 
