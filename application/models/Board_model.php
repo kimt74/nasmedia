@@ -21,14 +21,14 @@ class Board_model extends CI_Model
 //
 //        return $result;
 //    }
-    function get_list($table = 'board', $type = '', $offset = '', $limit = '', $search_word =' ')
+    function get_list($table = 'board', $type = '', $offset = '', $limit = '', $search_word = ' ')
     {
         $table = 'board';
         $sSword = '';
         if ($search_word != '') {
             // 검색어 있을 경우
 //            $sSword = ' WHERE subject like "%' . $search_word . '%" or contents like "%' . $search_word . '%" ';
-            $sSword = ' AND (title like "%' . $this->db->escape_str($search_word)  . '%" or content like "%' . $this->db->escape_str($search_word) . '%") ';
+            $sSword = ' AND (title like "%' . $this->db->escape_str($search_word) . '%" or content like "%' . $this->db->escape_str($search_word) . '%") ';
         }
 
 
@@ -42,15 +42,13 @@ class Board_model extends CI_Model
 //        $sql = "SELECT * FROM ". $table .$sSword. " ORDER BY board_id DESC " . $limit_query;
 
 
-
-
         $sql = "
         SELECT * 
-        FROM ". $table . " 
+        FROM " . $table . " 
         LEFT JOIN user
         ON board.user_id = user.user_id
         WHERE board.deleted_flag = 'n'
-        ".$sSword."
+        " . $sSword . "
         ORDER BY board_id 
         DESC " . $limit_query;
 
@@ -72,6 +70,7 @@ class Board_model extends CI_Model
 
         return $result;
     }
+
     /**
      * 게시물 상세보기 가져오기
      *
@@ -79,7 +78,8 @@ class Board_model extends CI_Model
      * @param string $id 게시물 번호
      * @return array
      */
-    public function get_view($id) {
+    public function get_view($id)
+    {
         /*
         $sQuery = "
             SELECT
@@ -100,12 +100,12 @@ class Board_model extends CI_Model
         ";
         // 조횟수 증가
         $sql0 = "UPDATE board SET hits = hits + 1 WHERE board_id='" . $this->db->escape_str($id) . "'";
-        $this -> db -> query($sql0);
+        $this->db->query($sql0);
 
-        $query = $this -> db -> query($sQuery);
+        $query = $this->db->query($sQuery);
 
         // 게시물 내용 반환
-        $result = $query -> row();
+        $result = $query->row();
 
         return $result;
 
@@ -117,7 +117,8 @@ class Board_model extends CI_Model
      * @param array $arrays 테이블 명, 게시물 제목, 게시물 내용 1차 배열
      * @return boolean 입력 성공여부
      */
-    function insert_board($arrays) {
+    function insert_board($arrays)
+    {
 
         $insert_array = array(
             'user_id' => $this->db->escape_str($arrays['user_id']),
@@ -131,16 +132,18 @@ class Board_model extends CI_Model
 
         return $result;
     }
+
     /**
      * 게시물 작성자 아이디 반환
      *
      * @return string 작성자 아이디
      */
-    function writer_check() {
+    function writer_check()
+    {
         $table = 'board';
         $board_id = $this->input->get('id', TRUE);
 
-        $sql = "SELECT user_id FROM ".$table." WHERE board_id = '".$board_id."'";
+        $sql = "SELECT user_id FROM " . $table . " WHERE board_id = '" . $board_id . "'";
         $query = $this->db->query($sql);
 
         return $query->row();
@@ -153,7 +156,8 @@ class Board_model extends CI_Model
      * @param array $arrays 테이블 명, 게시물 번호, 게시물 제목, 게시물 내용
      * @return boolean 성공 여부
      */
-    function modify_board($arrays) {
+    function modify_board($arrays)
+    {
         $modify_array = array(
             'title' => $this->db->escape_str($arrays['title']),
             'content' => $this->db->escape_str($arrays['content'])
@@ -167,6 +171,7 @@ class Board_model extends CI_Model
 
         return $result;
     }
+
     /**
      * 게시물 삭제
      *
@@ -175,13 +180,13 @@ class Board_model extends CI_Model
      * @return boolean 성공 여부
      *
      */
-    function delete_content($no) {
+    function delete_content($no)
+    {
         $sql = "UPDATE board SET deleted_flag = 'y' WHERE board_id='" . $this->db->escape_str($no) . "'";
-        $query = $this -> db -> query($sql);
-        if($query){
+        $query = $this->db->query($sql);
+        if ($query) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
@@ -192,19 +197,19 @@ class Board_model extends CI_Model
      * @param array $arrays 테이블 명, 게시물 제목, 게시물 내용, 아이디
      * @return boolean 성공 여부
      */
-    function insert_comment($arrays) {
+    function insert_comment($arrays)
+    {
         $insert_array = array(
-            'board_pid' => $arrays['board_pid'],
+            'board_id' => $arrays['board_id'],
             'user_id' => $arrays['user_id'],
-            'user_name' => $arrays['user_id'],
-            'subject' => $arrays['subject'],
-            'contents' => $arrays['contents'],
-            'reg_date' => date('Y-m-d H:i:s')
+            'content' => $arrays['content'],
+            'created' => date('Y-m-d H:i:s')
         );
 
-        $this -> db -> insert($arrays['table'], $insert_array);
+        $this->db->insert($arrays['table'], $insert_array);
 
-        $board_id = $this -> db -> insert_id();
+        $board_id = $this->db->insert_id();
+
 
         return $board_id;
     }
@@ -217,11 +222,27 @@ class Board_model extends CI_Model
      * @return array
      *
      */
-    function get_comment($table, $id) {
-        $sql = "SELECT * FROM ". $table . " WHERE board_pid = '". $id . "' ORDER BY board_id DESC";
-        $query = $this -> db -> query($sql);
+    function get_comment($id)
+    {
+        $sql = "
+        SELECT 
+          comment.content,
+          comment.created,
+          user.`login_id`,
+          board_id,
+          comment_id,
+          user.`user_id`,
+          parent_id,
+          comment.`deleted_flag` 
+        FROM comment
+        LEFT JOIN user
+        ON comment.user_id = user.user_id 
+        WHERE board_id = '" . $id . "' 
+        ORDER BY comment_id DESC";
 
-        $result = $query -> result();
+        $query = $this->db->query($sql);
+
+        $result = $query->result();
 
         return $result;
     }

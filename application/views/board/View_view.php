@@ -2,9 +2,9 @@
 <script type="text/javascript">
     function comment_add() {
         var csrf_token = getCookie('csrf_cookie_name');
-        var name = "comment_contents=" + encodeURIComponent(document.com_add.comment_contents.value) +
-            "&csrf_test_name=" + csrf_token + "&table=<?php echo $this->uri->segment(3); ?>&board_id=<?php echo $this->uri->segment(5); ?>";
-        sendRequest("/bbs/ajax_board/ajax_comment_add", name, add_action, "POST");
+        var name = "content=" + encodeURIComponent(document.com_add.content.value) +
+            "&csrf_test_name=" + csrf_token + "&table=comment&board_id=<?php echo $this->input->get('id', TRUE); ?>";
+        sendRequest("/ajax_board/ajax_comment_add", name, add_action, "POST");
     }
 
     function add_action() {
@@ -17,8 +17,8 @@
                 } else if (httpRequest.responseText == 9000) { //로그인 필요
                     alert("로그인하여야 합니다.");
                 } else {
-                    var contents = document.getElementById("comment_area");
-                    contents.innerHTML = httpRequest.responseText;
+                    var content = document.getElementById("comment_area");
+                    content.innerHTML = httpRequest.responseText;
 
                     var textareas = document.getElementById("input01");
                     textareas.value = '';
@@ -93,7 +93,7 @@
             <div class="control-group">
                 <label class="control-label" for="input01">댓글</label>
                 <div class="controls">
-                    <textarea class="input-xlarge" id="input01" name="comment_contents" rows="3"></textarea>
+                    <textarea class="input-xlarge" id="input01" name="content" rows="3"></textarea>
                     <input class="btn btn-primary" type="button" onclick="comment_add()" value="작성" />
                     <p class="help-block"></p>
                 </div>
@@ -109,12 +109,12 @@
                     ?>
                     <tr>
                         <th scope="row">
-                            <?php echo $lt->user_id;?>
+                            <?php echo $lt->login_id;?>
                         </th>
-                        <td><?php echo $lt->contents;?></td>
+                        <td><?php echo $lt->content;?></td>
                         <td>
-                            <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->reg_date)); ?>">
-                                <?php echo $lt->reg_date;?>
+                            <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>">
+                                <?php echo $lt->created;?>
                             </time>
                         </td>
                     </tr>
@@ -122,6 +122,20 @@
                 }
             }
             ?>
+
+            <div style="text-indent: 50px;" class="comment reply view" id="comment_reply_area">
+
+
+            </div>
+
+
+
+            <div class="comment_reply" id="comment_reply" style="text-indent: 50px">
+
+            </div>
+
+
+
             </tbody>
         </table>
     </div>
