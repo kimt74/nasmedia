@@ -1,50 +1,142 @@
-    <article id="board_area">
-        <header>
-            <h1></h1>
-        </header>
-        <table cellspacing="0" cellpadding="0" class="table table-striped" border="1">
-            <thead>
-            <tr>
-                <th scope="col">제목: <?php if (isset($views)) {
-                        echo $views -> title;
-                    } ?></th>
-                <th scope="col">이름: <?php echo $views -> login_id;?></th>
-                <th scope="col">조회수: <?php echo $views -> hits;?></th>
-                <th scope="col">등록일: <?php echo $views -> created;?></th>
-            </tr>
-            </thead>
+<script type="text/javascript" src="/include/js/httpRequest.js"></script>
+<script type="text/javascript">
+    function comment_add() {
+        var csrf_token = getCookie('csrf_cookie_name');
+        var name = "comment_contents=" + encodeURIComponent(document.com_add.comment_contents.value) +
+            "&csrf_test_name=" + csrf_token + "&table=<?php echo $this->uri->segment(3); ?>&board_id=<?php echo $this->uri->segment(5); ?>";
+        sendRequest("/bbs/ajax_board/ajax_comment_add", name, add_action, "POST");
+    }
+
+    function add_action() {
+        if (httpRequest.readyState == 4) { //데이터 전송이 완료된상태이면 실행
+            if (httpRequest.status == 200) { //웹서버 응답 성공 이면 실행
+                if (httpRequest.responseText == 1000) { //댓글내용이 없습니다
+                    alert("댓글의 내용을 입력하세요.");
+                } else if (httpRequest.responseText == 2000) { //데이터베이스 입력중 에러
+                    alert("다시 입력하세요.");
+                } else if (httpRequest.responseText == 9000) { //로그인 필요
+                    alert("로그인하여야 합니다.");
+                } else {
+                    var contents = document.getElementById("comment_area");
+                    contents.innerHTML = httpRequest.responseText;
+
+                    var textareas = document.getElementById("input01");
+                    textareas.value = '';
+                }
+            }
+        }
+    }
+
+    function getCookie(name) {
+        var nameOfCookie = name + "=";
+        var x = 0;
+
+        while (x <= document.cookie.length) {
+            var y = (x + nameOfCookie.length);
+
+            if (document.cookie.substring(x, y) == nameOfCookie) {
+                if ((endOfCookie = document.cookie.indexOf(";", y)) == -1)
+                    endOfCookie = document.cookie.length;
+
+                return unescape(document.cookie.substring(y, endOfCookie));
+            }
+
+            x = document.cookie.indexOf(" ", x) + 1;
+
+            if (x == 0)
+
+                break;
+        }
+    }
+
+</script>
+
+
+<article id="board_area">
+    <header>
+        <h1></h1>
+    </header>
+    <table cellspacing="0" cellpadding="0" class="table table-striped" border="1">
+        <thead>
+        <tr>
+            <th scope="col">제목: <?php if (isset($views)) {
+                    echo $views->title;
+                } ?></th>
+            <th scope="col">이름: <?php echo $views->login_id; ?></th>
+            <th scope="col">조회수: <?php echo $views->hits; ?></th>
+            <th scope="col">등록일: <?php echo $views->created; ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th colspan="4">
+                <?php echo $views->content; ?>
+            </th>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="4">
+                <a href="/board/?per_page=<?= $this->input->get('per_page', TRUE); ?>" class="btn btn-primary">목록 </a>
+                <!--                    <a href="javascript:history.back();" class="btn btn-primary">목록</a>-->
+                <a href="/board/modify?id=<?= $this->input->get('id'); ?>&per_page=<?= $this->input->get('per_page', TRUE) ?>"
+                   class="btn btn-warning"> 수정 </a>
+                <a href="/board/delete?id=<?= $this->input->get('id'); ?>&per_page=<?= $this->input->get('per_page', TRUE) ?>"
+                   class="btn btn-danger"> 삭제 </a>
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+    <form class="form-horizontal" method="POST" action="" name="com_add">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="input01">댓글</label>
+                <div class="controls">
+                    <textarea class="input-xlarge" id="input01" name="comment_contents" rows="3"></textarea>
+                    <input class="btn btn-primary" type="button" onclick="comment_add()" value="작성" />
+                    <p class="help-block"></p>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <div id="comment_area">
+        <table cellspacing="0" cellpadding="0" class="table table-striped">
             <tbody>
-            <tr>
-                <th colspan="4">
-                    <?php echo $views -> content;?>
-                </th>
-            </tr>
+            <?php
+            if (!empty($comment_list)) {
+                foreach ($comment_list as $lt) {
+                    ?>
+                    <tr>
+                        <th scope="row">
+                            <?php echo $lt->user_id;?>
+                        </th>
+                        <td><?php echo $lt->contents;?></td>
+                        <td>
+                            <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->reg_date)); ?>">
+                                <?php echo $lt->reg_date;?>
+                            </time>
+                        </td>
+                    </tr>
+                    <?php
+                }
+            }
+            ?>
             </tbody>
-            <tfoot>
-            <tr>
-                <th colspan="4">
-<!--                    <a href="/board/lists/--><?php //echo $this -> uri -> segment(3); ?><!--/-->
-<!--                                    page/--><?php //echo $this -> uri -> segment(7); ?><!--" class="btn btn-primary">목록 </a>-->
-                    <a href="javascript:history.back();" class="btn btn-primary">목록</a>
-                    <a href="/board/modify?id=<?=$this->input->get('id');?>"
-                       class="btn btn-warning"> 수정 </a>
-                    <a href="/board/delete?id=<?= $this -> input->get('id');?>"
-                       class="btn btn-danger"> 삭제 </a>
-                    <a href="/board/write/<?php echo $this -> uri -> segment(3); ?>/page/<?php echo $this -> uri -> segment(7); ?>"
-                       class="btn btn-success">쓰기</a>
-                </th>
-            </tr>
-            </tfoot>
         </table>
-    </article>
-    <footer id="footer">
-        <dl>
-            <dt>
-            </dt>
-            <dd>
-            </dd>
-        </dl>
-    </footer>
+    </div>
+
+
+</article>
+
+<footer id="footer">
+    <dl>
+        <dt>
+        </dt>
+        <dd>
+        </dd>
+    </dl>
+</footer>
 </div>
 </body>
 </html>

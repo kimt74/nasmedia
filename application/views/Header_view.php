@@ -20,7 +20,7 @@
                 <?php
                 if ( !empty($this -> session -> userdata('login_id')) ) {
                     ;?>
-                    <?php echo $this -> session -> userdata('login_id');?> 님 환영합니다. <a href="/auth/logout" class="btn">로그아웃</a>
+                    <?php echo $this -> session -> userdata('login_id');?> 님 환영합니다. <a href="/auth/logout" class="btn">[로그아웃]</a>
                     <?php
                 } else {
                     ?>
@@ -35,7 +35,7 @@
     <nav id="gnb">
         <ul>
             <li>
-                <a rel="external" href="/board"> 게시판 프로젝트 </a>
+                <a rel="external" href="/board"> [게시판 프로젝트] </a>
             </li>
         </ul>
     </nav>

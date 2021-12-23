@@ -1,24 +1,23 @@
-
-    <script>
-        $(document).ready(function () {
-            $("#search_btn").click(function () {
-                if ($("#q").val() == '') {
-                    alert("검색어를 입력하세요!");
-                    return false;
-                } else {
-                    // var act = "/board/lists/board/q/" + $("#q").val() + "/page/1";
-                    var act = "/board/?search_word=" + $("#q").val() + "&per_page=1";
-                    $("#bd_search").attr('action', act).submit();
-                }
-            });
+<script>
+    $(document).ready(function () {
+        $("#search_btn").click(function () {
+            if ($("#q").val() == '') {
+                alert("검색어를 입력하세요!");
+                return false;
+            } else {
+                // var act = "/board/lists/board/q/" + $("#q").val() + "/page/1";
+                var act = "/board/?search_word=" + $("#q").val() + "&per_page=1";
+                $("#bd_search").attr('action', act).submit();
+            }
         });
+    });
 
-        function board_search_enter(form) {
-            var keycode = window.event.keyCode;
-            if (keycode == 13)
-                $("#search_btn").click();
-        }
-    </script>
+    function board_search_enter(form) {
+        var keycode = window.event.keyCode;
+        if (keycode == 13)
+            $("#search_btn").click();
+    }
+</script>
 </head>
 
 
@@ -41,7 +40,6 @@
         <?php
         if (isset($list)) {
             foreach ($list as $lt) {
-//                var_dump($this -> uri -> segment(1));
                 ?>
                 <tr>
                     <th scope="row"><?= $lt->board_id; ?></th>
@@ -51,7 +49,8 @@
                            href="ci/?<?= $this->uri->segment(1); ?>/view/<?= $lt->board_id; ?>"> <?= $lt->title; ?>
                         </a>
                         -->
-                        <a rel="external" href="/board/view?id=<?= $lt->board_id; ?>"> <?= $lt->title; ?>
+                        <a rel="external"
+                           href="/board/view?id=<?= $lt->board_id; ?>&per_page=<?= $this->input->get('per_page'); ?>"> <?= $lt->title; ?>
                         </a>
 
                     </td>
@@ -85,7 +84,7 @@
         </form>
     </div>
     <div>
-            <a href="/board/write" class="btn btn-primary">[게시물등록]</a>
+        <a href="/board/write" class="btn btn-primary">[게시물등록]</a>
     </div>
 </article>
 

@@ -152,6 +152,10 @@ class Board extends CI_Controller
 
         $nBoardId = $this->input->post_get('id', true);
         $data['views'] = $this->Board_model->get_view($nBoardId);
+
+        // 게시판 이름과 세미루 번호에 해당하는 댓글 리스트 가져오기
+        $data['comment_list'] = $this -> Board_model -> get_comment($nBoardId);
+
         // view 호출
         $this->load->view('board/View_view', $data);
     }
@@ -262,101 +266,57 @@ class Board extends CI_Controller
         $this->load->helper('alert');
         echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
 
-        $uri_array = $this->segment_explode($this->uri->uri_string());
 
-        if (in_array('page', $uri_array)) {
-            $pages = urldecode($this->url_explode($uri_array, 'page'));
-        } else {
-            $pages = 1;
-        }
 
         if (@$this->session->userdata['logged_in'] == TRUE) {
-            $write_id = $this->board_m->writer_check();
+            $write_id = $this->Board_model->writer_check();
 
-            if ($write_id->user_id != $this->session->userdata('username')) {
-                alert('본인이 작성한 글이 아닙니다.', '/bbs/board/view/' . $this->uri->segment(3) . '/' . $this->uri->segment(5) . '/page/' . $pages);
+            if ($write_id->user_id != $this->session->userdata('user_id')) {
+                alert('본인이 작성한 글이 아닙니다.', '/board/view/?id=' .$this->input->get('id'). '&per_page=' .$this->input->get('per_page'));
                 exit;
             }
 
             $this->load->library('form_validation');
 
             // 폼 검증할 필드와 규칙 사전 정의
-            $this->form_validation->set_rules('subject', '제목', 'required');
-            $this->form_validation->set_rules('contents', '내용', 'required');
+            $this->form_validation->set_rules('title', '제목', 'required');
+            $this->form_validation->set_rules('content', '내용', 'required');
 
             if ($this->form_validation->run() == TRUE) {
 
 
-                if (!$this->input->post('subject', TRUE) and !$this->input->post('contents', TRUE)) {
-                    alert('비정상적인 접근입니다.', 'bbs/board/lists/' . $this->uri->segment(3) . '/page/' . $pages);
+                if (!$this->input->post('title', TRUE) and !$this->input->post('content', TRUE)) {
+                    alert('비정상적인 접근입니다.', '/board/'.'?per_page='.$this->input->get('per_page', TRUE));
                     exit;
                 }
 
                 $modify_data = array(
-                    'table' => $this->uri->segment(3),
-                    'board_id' => $this->uri->segment(5),
-                    'subject' => $this->input->post('subject', TRUE),
-                    'contents' => $this->input->post('contents', TRUE)
+                    'table' => 'board',
+                    'board_id' => $this->input->get('id', TRUE),
+                    'title' => $this->input->post('title', TRUE),
+                    'content' => $this->input->post('content', TRUE)
                 );
 
-                $result = $this->board_m->modify_board($modify_data);
+                $result = $this->Board_model->modify_board($modify_data);
 
                 if ($result) {
-                    alert('수정되었습니다.', 'bbs/board/lists/' . $this->uri->segment(3) . '/page/' . $pages);
+                    alert('수정되었습니다.', '/board/?per_page=' .$this->input->get('per_page', TRUE));
                     exit;
                 } else {
-                    alert('다시 수정해 주세요.', 'bbs/board/view/' . $this->uri->segment(3) . '/board_id/' . $this->uri->segment(5) . '/page/' . $pages);
+                    alert('다시 수정해 주세요.', '/board/view/?id=' . $this->input->get('id', TRUE).'&per_page=' . $this->input->get('per_page', TRUE));
                     exit;
                 }
 
             } else {
-                $data['views'] = $this->board_m->get_view($this->uri->segment(3), $this->uri->segment(5));
-                $this->load->view('board/modify_v', $data);
+                $data['views'] = $this->Board_model->get_view($this->input->get('id', TRUE));
+                $this->load->view('board/Modify_view', $data);
             }
         } else {
-            alert('로그인 후 수정하세요', '/bbs/auth/login/');
+            alert('로그인 후 수정하세요', '/Auth/login/');
             exit;
         }
 
-        //        echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-//
-//        if ($_POST) {
-//            $this->load->helper('alert');
-//
-//            $uri_array = $this->segment_explode($this->uri->uri_string());
-//
-//            if (in_array('page', $uri_array)) {
-//                $pages = urldecode($this->url_explode($uri_array, 'page'));
-//            } else {
-//                $pages = 1;
-//            }
-//
-//            if (!$this->input->post('title', TRUE) and !$this->input->post('content', TRUE)) {
-//                alert('비정상적인 접근입니다.', '/board/');
-//                exit;
-//            }
-//
-//
-//            $modify_data = array(
-//                'table' => 'board',
-//                'board_id' => $this->input->get('id'),
-//                'title' => $this->input->post('title', TRUE),
-//                'content' => $this->input->post('content', TRUE)
-//            );
-//
-//            $result = $this->Board_model->modify_board($modify_data);
-//
-//            if ($result) {
-//                alert('수정되었습니다.', '/board/');
-//                exit;
-//            } else {
-//                alert('다시 수정해 주세요.', '/board/view?id=' . $this->input->get('id'));
-//                exit;
-//            }
-//        } else {
-//            $data['views'] = $this->Board_model->get_view($this->input->get('id'));
-//            $this->load->view('board/Modify_view', $data);
-//        }
+
     }
 
     /**
@@ -365,19 +325,30 @@ class Board extends CI_Controller
 
     function delete()
     {
+        $this -> load -> helper('alert');
         echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
 
-        $this->load->helper('alert');
+        if ( @$this->session->userdata('logged_in') == TRUE) {
+            $writer_id = $this->Board_model->writer_check();
 
-        $return = $this->Board_model->delete_content($this->input->get('id'));
+            if ( $writer_id-> user_id != $this->session->userdata('user_id')) {
+                alert('본인이 작성한 글이 아닙니다.', '/board/view/?id=' .$this->input->get('id', TRUE) . '/&per_page=' .$this->input->get('per_page', TRUE));
+                exit;
+            }
 
-        if ($return) {
-            alert('삭제되었습니다.', '/board/');
-            exit;
+            $return = $this->Board_model->delete_content($this->input->get('id', TRUE));
+
+            if ($return) {
+                alert('삭제되었습니다.', '/board/?per_page=' .$this->input->get('per_page', TRUE));
+                exit ;
+            } else {
+                alert('삭제 실패하였습니다.', '/board/view/?id=' .$this->input->get('id', TRUE) . '/&per_page=' .$this->input->get('per_page', TRUE));
+                exit ;
+            }
+
         } else {
-            alert('삭제 실패하였습니다.', '/board/view?id=' . $this->input->get('id'));
+            alert('로그인 후 삭제하세요.', '/Auth/login/');
             exit;
         }
-
     }
 }
