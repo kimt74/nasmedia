@@ -149,7 +149,22 @@ class Board_model extends CI_Model
         return $query->row();
 
     }
+    /**
+     * 댓글 작성자 아이디 반환
+     *
+     * @return string 작성자 아이디
+     */
+    function writer_check2($comment_id)
+    {
+        $table = 'comment';
+        //$board_id = $this->input->get('id', TRUE);
 
+        $sql = "SELECT user_id FROM " . $table . " WHERE comment_id = '" . $comment_id . "'";
+        $query = $this->db->query($sql);
+
+        return $query->row();
+
+    }
     /**
      * 게시물 수정
      *
@@ -189,6 +204,25 @@ class Board_model extends CI_Model
         } else {
             return false;
         }
+    }
+    /**
+     * 댓글 삭제
+     *
+     * @param string $table 테이블 명
+     * @param string $no 게시물 번호
+     * @return boolean 성공 여부
+     *
+     */
+    function delete_comment($no)
+    {
+        $sql = "UPDATE comment SET deleted_flag = 'y' WHERE comment_id='" . $this->db->escape_str($no) . "'";
+        $query = $this->db->query($sql);
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -237,8 +271,9 @@ class Board_model extends CI_Model
         FROM comment
         LEFT JOIN user
         ON comment.user_id = user.user_id 
-        WHERE board_id = '" . $id . "' 
-        ORDER BY comment_id DESC";
+        WHERE board_id = '" . $id . "'
+        AND deleted_flag = 'n' 
+        ORDER BY comment_id ASC";
 
         $query = $this->db->query($sql);
 

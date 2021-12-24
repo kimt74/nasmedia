@@ -66,6 +66,7 @@ class Auth extends CI_Controller {
 ////print_r($this -> session);
 //echo $this->session->userdata('login_id');
 //                echo $this->session->userdata('login_id');
+
                echo "<script>document.location.href='/board';</script>";
                      alert('로그인 되었습니다.', '/board/?per_page=1');
                 exit;

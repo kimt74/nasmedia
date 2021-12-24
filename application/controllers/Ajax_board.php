@@ -48,33 +48,18 @@ class Ajax_board extends CI_Controller
                 );
 
 
-                $result = $this->Board_model->insert_comment($write_data);
+                $nBoardId = $this->Board_model->insert_comment($write_data);
 
-                if ($result) {
-                    $sql = "
-                                  SELECT
-                                  comment.content,
-                                  comment.created,
-                                  user.`login_id`,
-                                  board_id,
-                                  comment_id,
-                                  user.`user_id`,
-                                  parent_id,
-                                  comment.`deleted_flag` 
-                                  FROM
-                                  " . $table . " 
-                                  LEFT JOIN USER
-                                  ON comment.user_id = user.user_id 
-                                  WHERE board_id = '" . $board_id . "' 
-                                  ORDER BY comment_id DESC";
-                    $query = $this->db->query($sql);
+                if ($nBoardId) {
+
+                    $aComment = $this->Board_model->get_comment($board_id);;
                     ?>
-                    <table cellspacing="0" cellpadding="0" class="table table-striped">
+                    <table cellspacing="1" cellpadding="1" class="table table-striped">
                         <tbody>
                         <?php
-                        foreach ($query->result() as $lt) {
+                        foreach ($aComment as $lt) {
                             ?>
-                            <tr>
+                            <tr id="row_num_<?php echo $lt->comment_id; ?>" comment_id="<?=$lt->comment_id;?>">
                                 <th scope="row">
                                     <?php echo $lt->login_id; ?>
                                 </th>
@@ -83,6 +68,11 @@ class Ajax_board extends CI_Controller
                                     <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>">
                                         <?php echo $lt->created; ?>
                                     </time>
+                                </td>
+                                <td>
+                                    <a href="#" id="comment_delete" comment_id="<?=$lt->comment_id;?>">
+                                        <i class="icon-trash"></i>[삭제]
+                                    </a>
                                 </td>
                             </tr>
                             <?php
@@ -104,5 +94,37 @@ class Ajax_board extends CI_Controller
             echo "9000";
         }
     }
+
+    /**
+     * ajax 방식 댓글 삭제
+     */
+    public function ajax_comment_delete() {
+        if ( @$this -> session -> userdata('logged_in') == TRUE) {
+            $this -> load -> model('Board_model');
+
+            $table = 'comment';
+            $comment_id = $this -> input -> post("comment_id", TRUE);
+
+            $writer_id = $this -> Board_model -> writer_check2($comment_id);
+//
+//           echo   $writer_id -> user_id;
+//           exit;
+            if ( $writer_id -> user_id != $this -> session -> userdata('user_id')) {
+                echo "8000";
+            } else {
+                $result = $this -> Board_model -> delete_comment($comment_id);
+
+                if ($result) {
+                    echo $comment_id;
+                } else {
+                    echo "2000"; // 글 실패
+                }
+            }
+        } else {
+            echo "9000"; // 로그인 에러
+        }
+    }
+
+
 
 }

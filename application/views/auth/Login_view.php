@@ -28,8 +28,11 @@
 
             <div class="form_actions">
                 <button type="submit" class="btn btn-primary">확인</button>
-                <button class="btn" onclick="document.location.reload()">취소</button>
+<!--                <button class="btn" onclick="document.location.reload()">취소</button>-->
+                <button type="button" class="btn" id="btn"  onclick="location.href='/board'">취소</button>
             </div>
+
         </div>
+
     </fieldset>
 </article>
