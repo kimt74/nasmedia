@@ -93,8 +93,8 @@ class Board_model extends CI_Model
         $sQuery = "
         SELECT b.*, u.`login_id`
         FROM board b
-        LEFT JOIN USER u
-        ON b.`user_id` = u.user_id
+            LEFT JOIN USER u
+                ON b.`user_id` = u.user_id
         WHERE board_id='" . $this->db->escape_str($id) . "'
 
         ";
@@ -237,6 +237,7 @@ class Board_model extends CI_Model
             'board_id' => $arrays['board_id'],
             'user_id' => $arrays['user_id'],
             'content' => $arrays['content'],
+            'parent_id' => $arrays['parent_id'],
             'created' => date('Y-m-d H:i:s')
         );
 
@@ -247,6 +248,9 @@ class Board_model extends CI_Model
 
         return $board_id;
     }
+
+
+
 
     /**
      * 댓글 리스트 가져오기
@@ -272,6 +276,40 @@ class Board_model extends CI_Model
         LEFT JOIN user
         ON comment.user_id = user.user_id 
         WHERE board_id = '" . $id . "'
+        AND deleted_flag = 'n' 
+        ORDER BY comment_id ASC";
+
+        $query = $this->db->query($sql);
+
+        $result = $query->result();
+
+        return $result;
+    }
+
+    /**
+     * 댓글 리스트 가져오기
+     *
+     * @param string $table 테이블
+     * @param string $id 게시물 번호
+     * @return array
+     *
+     */
+    function get_comment_reply($id)
+    {
+        $sql = "
+        SELECT 
+          comment.content,
+          comment.created,
+          user.`login_id`,
+          board_id,
+          comment_id,
+          user.`user_id`,
+          parent_id,
+          comment.`deleted_flag` 
+        FROM comment
+        LEFT JOIN user
+        ON comment.user_id = user.user_id 
+        WHERE parent_id = '" . $id . "'
         AND deleted_flag = 'n' 
         ORDER BY comment_id ASC";
 

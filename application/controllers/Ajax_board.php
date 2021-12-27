@@ -38,21 +38,42 @@ class Ajax_board extends CI_Controller
             $table = 'comment';
             $board_id = $this->input->post('board_id', TRUE);
             $content = $this->input->post('content', TRUE);
+            $parent_id = $this->input->post('parent_id', TRUE);
 //            var_dump($board_id);
             if ($content != '') {
-                $write_data = array(
-                    "table" => $table,
-                    "board_id" => $board_id,
-                    "content" => $content,
-                    "user_id" => $this->session->userdata('user_id')
-                );
+                if($parent_id != '') {
 
+                    $write_data = array(
+                        "table" => $table,
+                        "board_id" => $board_id,
+                        "content" => $content,
+                        "user_id" => $this->session->userdata('user_id'),
+                        "parent_id" => $parent_id
+
+                    );
+
+                }
+                else {
+                    $write_data = array(
+                        "table" => $table,
+                        "board_id" => $board_id,
+                        "content" => $content,
+                        "user_id" => $this->session->userdata('user_id'),
+                        "parent_id" => 0
+                    );
+                }
 
                 $nBoardId = $this->Board_model->insert_comment($write_data);
+
+                $aReturnData['result'] = "200";
+                echo json_encode($aReturnData);
 
                 if ($nBoardId) {
 
                     $aComment = $this->Board_model->get_comment($board_id);;
+                    $aCommentReply = $this->Board_model->get_comment_reply($parent_id);;
+                    $viewData = array();
+                    $sHtml = $this->load->view("board/comment_list", $viewData)
                     ?>
                     <table cellspacing="1" cellpadding="1" class="table table-striped">
                         <tbody>
@@ -63,7 +84,11 @@ class Ajax_board extends CI_Controller
                                 <th scope="row">
                                     <?php echo $lt->login_id; ?>
                                 </th>
-                                <td><?php echo $lt->content; ?></td>
+
+                                <td><?php echo $lt->content; ?>
+
+                                </td>
+
                                 <td>
                                     <time datetime="<?php echo mdate("%Y-%M-%j", human_to_unix($lt->created)); ?>">
                                         <?php echo $lt->created; ?>
@@ -73,12 +98,24 @@ class Ajax_board extends CI_Controller
                                     <a href="#" id="comment_delete" comment_id="<?=$lt->comment_id;?>">
                                         <i class="icon-trash"></i>[삭제]
                                     </a>
+                                    <a href="#" id="comment_reply" comment_reply_id="<?=$lt->comment_id;?>">
+                                        <i class="icon-trash"></i>[대댓글달기]
+                                    </a>
                                 </td>
+                            </tr>
+
+
+                            <tr>
+                               <td style="text-indent: 50px" id="comment_reply_view">
+
+                               </td>
+
                             </tr>
                             <?php
                         }
                         ?>
                         </tbody>
+
                     </table>
                     <?php
                 } else {

@@ -37,14 +37,18 @@ class Board extends CI_Controller
     public function _remap($method)
     {
         // 헤더 include
-        $this->load->view('Header_view');
-
+        if($method != 'getCommentList') {
+            $this->load->view('Header_view');
+        }
         if (method_exists($this, $method)) {
+
             $this->{"{$method}"}();
         }
 
         // 푸터 include
-        $this->load->view('Footer_view');
+        if($method != 'getCommentList') {
+            $this->load->view('Footer_view');
+        }
     }
 
     /**
@@ -113,6 +117,85 @@ class Board extends CI_Controller
 
         // view 호출
         $this->load->view('board/View_view', $data);
+
+
+    }
+
+    public function getCommentList(){
+        $nBoardId = $this->input->post('board_id');
+
+        $aViewData['comment_list'] = $this -> Board_model -> get_comment($nBoardId);
+        $aData['sHtml'] = $this->load->view('board/View_comment_list', @$aViewData, true);
+
+       echo json_encode($aData);
+    }
+    public function ajax_comment_add()
+    {
+        if (@$this->session->userdata('logged_in') == TRUE) {
+            $this->load->model('Board_model');
+
+            $table = 'comment';
+            $board_id = $this->input->post('board_id', TRUE);
+            $content = $this->input->post('content', TRUE);
+            $parent_id = $this->input->post('parent_id', TRUE);
+//            var_dump($board_id);
+            if ($content != '') {
+                if ($parent_id != '') {
+
+                    $write_data = array(
+                        "table" => $table,
+                        "board_id" => $board_id,
+                        "content" => $content,
+                        "user_id" => $this->session->userdata('user_id'),
+                        "parent_id" => $parent_id
+
+                    );
+
+                } else {
+                    $write_data = array(
+                        "table" => $table,
+                        "board_id" => $board_id,
+                        "content" => $content,
+                        "user_id" => $this->session->userdata('user_id'),
+                        "parent_id" => 0
+                    );
+                }
+
+                $nBoardId = $this->Board_model->insert_comment($write_data);
+
+                $aReturnData['result'] = "200";
+                echo json_encode($aReturnData);
+            }
+        }
+    }
+    /**
+     * ajax 방식 댓글 삭제
+     */
+    public function ajax_comment_delete() {
+        if ( @$this -> session -> userdata('logged_in') == TRUE) {
+            $this -> load -> model('Board_model');
+
+            $table = 'comment';
+            $comment_id = $this -> input -> post("comment_id", TRUE);
+
+            $writer_id = $this -> Board_model -> writer_check2($comment_id);
+//
+//           echo   $writer_id -> user_id;
+//           exit;
+            if ( $writer_id -> user_id != $this -> session -> userdata('user_id')) {
+                echo "8000";
+            } else {
+                $result = $this -> Board_model -> delete_comment($comment_id);
+
+                if ($result) {
+                    echo $comment_id;
+                } else {
+                    echo "2000"; // 글 실패
+                }
+            }
+        } else {
+            echo "9000"; // 로그인 에러
+        }
     }
 
     /**
@@ -133,6 +216,7 @@ class Board extends CI_Controller
             // 페이지네이션 용 주소
             $page_url = '/?search_word=' . $search_word;
         }
+
 
 
         // 페이지네이션 라이브러리 로딩
