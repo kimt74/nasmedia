@@ -1,6 +1,17 @@
+<!--<form class="form-horizontal" method="POST" action="" name="com_add">-->
+<!--    <fieldset>-->
+<!--        <div class="control-group">-->
+<!--            <label class="control-label" for="input01">댓글</label>-->
+<!--            <div class="controls">-->
+<!--                <textarea class="input-xlarge" id="input01" name="content" rows="3"></textarea>-->
+<!--                <input class="btn btn-primary" type="button" id="comment_add" value="작성"/>-->
+<!--                <p class="help-block"></p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </fieldset>-->
+<!--</form>-->
+
 <div id="comment_area">
-
-
     <table class="table table-striped">
         <tbody>
         <?php
@@ -42,9 +53,10 @@
                         <form class="form-horizontal" method="POST" action="" name="com_add2">
                             <div class="control-group2">
                                 <label class="control-label2" for="input02">대댓글</label>
-                                <div class="controls">
-                                    <textarea class="input-xlarge2" id="input02" name="content" rows="3"></textarea>
-                                    <input class="btn btn-primary2" type="button" id="comment_reply_add" value="작성"/>
+                                <div class="controls" id="btn_comment_reply_content_id_<?= $lt->comment_id; ?>">
+                                    <textarea class="input-xlarge" id="input02" name="content" rows="3"></textarea>
+                                    <input class="btn btn-primary" type="button" id="comment_reply_add" value="작성"/>
+
                                     <p class="help-block"></p>
                                 </div>
                             </div>
@@ -60,3 +72,4 @@
 
         </tbody>
     </table>
+</div>

@@ -82,22 +82,22 @@
                     "board_id": "<?= $this->input->get('id', TRUE); ?>"
                 },
                 dataType: "json",
+                success: function (aData) {
 
-                complete: function (xhr, textStatus) {
-                    if (textStatus == 'success') {
-                        if (xhr.responseText == 1000) {
+                        if (aData.result === "1000") {
                             alert('댓글 내용을 입력하세요.');
-                        } else if (xhr.responseText == 2000) {
+                        } else if (aData.result === "2000") {
                             alert('다시 입력하세요.');
-                        } else if (xhr.responseText == 9000) {
+                        } else if (aData.result === "9000") {
                             alert('로그인해야 합니다.');
                         } else {
+                            alert("입력했습니다");
                             getCommentList();
                             // alert($("#comment_area").html());
                             //       $("#comment_area").html(xhr.responseText);
                             $("#input01").val('');
                         }
-                    }
+
                 }
             });
         });
@@ -116,21 +116,22 @@
                     "comment_id": comment_id
                 },
                 dataType: "json",
-                complete: function (xhr, textStatus) {
-                    if (textStatus == 'success') {
-                        if (xhr.responseText == 9000) {
+                success: function (aReturnData) {
+                    console.log("this is output: "+ aReturnData.result);
+                        if (aReturnData.result === "9000") {
                             alert('로그인해야합니다.');
-                        } else if (xhr.responseText == 8000) {
+                        } else if (aReturnData.result === "8000") {
                             alert('본인의 댓글만 삭제할 수 있습니다.');
-                        } else if (xhr.responseText == 2000) {
+                        } else if (aReturnData.result  === "2000") {
                             alert('다시 삭제하세요.');
                         } else {
-                            $('#row_num_' + xhr.responseText).remove();
+                            //$('#row_num_' + aData.result ).remove();
                             alert('삭제되었습니다.');
                         }
-                    }
+
                 }
             });
+            getCommentList();
         });
 
 
@@ -139,33 +140,57 @@
             var parent_id = $(this).closest('tr').attr('comment_id');
             $("td.comment_reply_content#comment_reply_content_id_" + parent_id).toggle(0);
 
-            $("#comment_reply_add").click(function () {
+            $(document).on('click', '#comment_reply_add', function () {
+            // $("#comment_reply_add").click(function () {
                 // var parent_id = $(this).closest('td').attr('comment_id');
                 // console.log(">>>", $(this).closest('tr').attr('comment_id'));
                 console.log(">>>", parent_id);
+                console.log( $("#input02").serialize);
+                //let formData = new FormData($("#input02")[0]);
+                //console.log("formData = "+ formData.getAll());
                 $.ajax({
                     url: '/Board/ajax_comment_add',
                     type: 'POST',
                     data: {
-                        "content": encodeURIComponent($("#input02").val()),
+                        //"content": encodeURIComponent($("#input02").val()),
+                         "content": $("#input02").val(),
                         "csrf_test_name": getCookie('csrf_cookie_name'),
                         "table": "comment",
                         "board_id": "<?= $this->input->get('id', TRUE); ?>",
                         "parent_id": parent_id
                     },
                     dataType: "json",
+                    success: function (aData) {
 
-                    complete: function (aData) {
-                        if (aData.result === "200") {
-                            alert("등록되었습니다.");
+                        if (aData.result === "1000") {
+                            alert('댓글 내용을 입력하세요.');
+                        } else if (aData.result === "2000") {
+                            alert('다시 입력하세요.');
+                        } else if (aData.result === "9000") {
+                            alert('로그인해야 합니다.');
+                        } else {
+                            //$("#input02").val('');
+                            alert("입력했습니다");
+                            // alert($("#comment_area").html());
+                            //       $("#comment_area").html(xhr.responseText);
+                            //$("#input02").val('');
                             getCommentList();
-                        }else{
-                            alert("실패");
                         }
+
                     }
+                    // success: function (aData) {
+                    //     console.log("in success fuction");
+                    //     if (aData.result === "200") {
+                    //         $("#input02").val('');
+                    //         alert("등록되었습니다.");
+                    //         getCommentList();
+                    //     }else{
+                    //         alert("실패");
+                    //     }
+                    // }
 
                 });
-                // console.log(">>>", xhr);
+                //getCommentList();
             });
 
 
@@ -214,6 +239,3 @@
     }
 
 </script>
-
-
-
