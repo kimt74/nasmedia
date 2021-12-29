@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <article id="board_area">
     <header>
         <h1></h1>
@@ -15,7 +16,7 @@
         </thead>
         <tbody>
         <tr>
-            <th colspan="4">
+            <th style="width:742px; height:300px; background-color:#ABEBC6; vertical-align:top; text-align:left " colspan="4" >
                 <?php echo $views->content; ?>
             </th>
         </tr>
@@ -66,7 +67,7 @@
 </body>
 </html>
 <script type="text/javascript">
-
+    let parent_id ='';
     $(function () {
 
         getCommentList();
@@ -103,7 +104,7 @@
         });
 
         $(document).on('click', '#comment_delete', function () {
-            //console.log(">>>", $(this).closest('tr').attr('comment_id'));
+            console.log(">>>", $(this).closest('tr').attr('comment_id'));
             //console.log(">>>", $(this).attr('comment_id'));
             var comment_id = $(this).closest('tr').attr('comment_id');
             $.ajax({
@@ -127,71 +128,61 @@
                         } else {
                             //$('#row_num_' + aData.result ).remove();
                             alert('삭제되었습니다.');
+                            getCommentList();
                         }
 
                 }
             });
-            getCommentList();
+            //getCommentList();
         });
 
+        $(document).on('click', '#comment_reply_add', function () {
+            //var parent_id = $(this).parents('tr').attr('comment_id');
+            // $("#comment_reply_add").click(function () {
+            // var parent_id = $(this).closest('td').attr('comment_id');
+            // console.log(">>>", $(this).closest('tr').attr('comment_id'));
+            console.log(">>>", parent_id);
+            console.log( $(this).closest('div').find("#input_for_comment_reply").val());
+            //let formData = new FormData($("#input02")[0]);
+            //console.log("formData = "+ formData.getAll());
+            $.ajax({
+                url: '/Board/ajax_comment_add',
+                type: 'POST',
+                data: {
+                    "content": encodeURIComponent($(this).closest('div').find("#input_for_comment_reply").val()),
+                    //  "content": $("#input02").val(),
+                    "csrf_test_name": getCookie('csrf_cookie_name'),
+                    "table": "comment",
+                    "board_id": "<?= $this->input->get('id', TRUE); ?>",
+                    "parent_id": parent_id
+                },
+                dataType: "json",
+                success: function (aData) {
+
+                    if (aData.result === "1000") {
+                        alert('댓글 내용을 입력하세요.');
+                    } else if (aData.result === "2000") {
+                        alert('다시 입력하세요.');
+                    } else if (aData.result === "9000") {
+                        alert('로그인해야 합니다.');
+                    } else if (aData.result === "200") {
+                        //$("#input02").val('');
+                        alert("입력했습니다");
+
+                        getCommentList();
+                    }
+
+                }
+
+
+            });
+            //getCommentList();
+        });
 
         $(document).on('click', '#comment_reply', function () {
             console.log(">>>", $(this).closest('tr').attr('comment_id'));
-            var parent_id = $(this).closest('tr').attr('comment_id');
+            parent_id = $(this).closest('tr').attr('comment_id');
             $("td.comment_reply_content#comment_reply_content_id_" + parent_id).toggle(0);
-
-            $(document).on('click', '#comment_reply_add', function () {
-            // $("#comment_reply_add").click(function () {
-                // var parent_id = $(this).closest('td').attr('comment_id');
-                // console.log(">>>", $(this).closest('tr').attr('comment_id'));
-                console.log(">>>", parent_id);
-                console.log( $("#input02").serialize);
-                //let formData = new FormData($("#input02")[0]);
-                //console.log("formData = "+ formData.getAll());
-                $.ajax({
-                    url: '/Board/ajax_comment_add',
-                    type: 'POST',
-                    data: {
-                        //"content": encodeURIComponent($("#input02").val()),
-                         "content": $("#input02").val(),
-                        "csrf_test_name": getCookie('csrf_cookie_name'),
-                        "table": "comment",
-                        "board_id": "<?= $this->input->get('id', TRUE); ?>",
-                        "parent_id": parent_id
-                    },
-                    dataType: "json",
-                    success: function (aData) {
-
-                        if (aData.result === "1000") {
-                            alert('댓글 내용을 입력하세요.');
-                        } else if (aData.result === "2000") {
-                            alert('다시 입력하세요.');
-                        } else if (aData.result === "9000") {
-                            alert('로그인해야 합니다.');
-                        } else {
-                            //$("#input02").val('');
-                            alert("입력했습니다");
-                            // alert($("#comment_area").html());
-                            //       $("#comment_area").html(xhr.responseText);
-                            //$("#input02").val('');
-                            getCommentList();
-                        }
-
-                    }
-                    // success: function (aData) {
-                    //     console.log("in success fuction");
-                    //     if (aData.result === "200") {
-                    //         $("#input02").val('');
-                    //         alert("등록되었습니다.");
-                    //         getCommentList();
-                    //     }else{
-                    //         alert("실패");
-                    //     }
-                    // }
-
-                });
-                //getCommentList();
-            });
 
 
         });

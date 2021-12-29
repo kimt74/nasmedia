@@ -86,8 +86,15 @@ class Board extends CI_Controller
 
                 $result = $this->Board_model->insert_board($write_data);
 
+                $nBoardId = $this->db->insert_id();
+
+                $this->file($nBoardId);
+
                 if ($result) {
                     alert("입력되었습니다.", '/board/');
+
+
+
                     exit;
                 } else {
                     alert("다시 입력해주세요.", '/board/');
@@ -108,26 +115,35 @@ class Board extends CI_Controller
     /**
      * 게시물 파일
      */
-   public function file()
+   public function file($nBoardId)
     {
         $config['upload_path'] = './data/';
         $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 100;
-        $config['max_width'] = 1024;
-        $config['max_height'] = 768;
+        $config['max_size'] = 3000;
+
 
         $this->load->library('upload', $config);
         $this->load->library('MY_Upload', $config);
 
 
-        $this->upload->do_multi_upload('files');  // 파일/사진 여러개 업로드 메소드
-
+        echo $this->upload->do_multi_upload('files');  // 파일/사진 여러개 업로드 메소드
+        echo 'hi';
         foreach ($this->upload->get_multi_upload_data() as $mulit_data) {
                     // 파일/사진 세부 데이터들
-
-
+//            $_FILES['images[]']['name']= $files['name'][$key];
+//            $_FILES['images[]']['type']= $files['type'][$key];
+//            $_FILES['images[]']['tmp_name']= $files['tmp_name'][$key];
+//            $_FILES['images[]']['error']= $files['error'][$key];
+//            $_FILES['images[]']['size']= $files['size'][$key];
+            $file_data = array(
+                'board_id' => $nBoardId,
+                'table' => 'file',
+                'user_id' => $this->session->userdata('user_id')
+//                'file_name' => $mulit_data->
+            );
+            $this->Board_model->insert_file($file_data);
         }
-
+        exit;
     }
 //    function do_upload()
 //    {
@@ -234,6 +250,7 @@ class Board extends CI_Controller
                 }
                 $aReturnData['result'] = "200";
                 echo json_encode($aReturnData);
+
             } else{
                 //글내용이 없을경우
                 $aReturnData['result'] = "1000";
@@ -244,6 +261,7 @@ class Board extends CI_Controller
             $aReturnData['result'] = "9000";
             echo json_encode($aReturnData);
         }
+
     }
 
     /**

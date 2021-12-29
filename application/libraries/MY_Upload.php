@@ -29,7 +29,8 @@ class MY_Upload extends CI_Upload {
      * @param	array
      * @return	void
      */
-    public function initialize($config = array()){
+//    public function initialize($config = array()){
+    public function initialize(array $config = array(), $reset = true){
         //Upload default settings.
         $defaults = array(
             "max_size"			=> 0,

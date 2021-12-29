@@ -134,6 +134,30 @@ class Board_model extends CI_Model
     }
 
     /**
+     * 게시물 입력
+     *
+     * @param array $arrays file 정보
+     * @return boolean 입력 성공여부
+     */
+    function insert_file($arrays)
+    {
+
+        $insert_array = array(
+            'user_id' => $this->db->escape_str($arrays['user_id']),
+            'title' => $this->db->escape_str($arrays['title']),
+            'content' => $this->db->escape_str($arrays['content']),
+            'created' => date("Y-m-d H:i:s")
+        );
+
+
+        $result = $this->db->insert($arrays['table'], $insert_array);
+
+        return $result;
+    }
+
+
+
+    /**
      * 게시물 작성자 아이디 반환
      *
      * @return string 작성자 아이디
